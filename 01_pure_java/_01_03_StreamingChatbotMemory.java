@@ -4,7 +4,7 @@
 //
 // Streaming chatbot with memory example calling OVHcloud AI Endpoints
 // (gpt-oss-120b).
-// Java 26 + JBang port of 00_bash/00.03_ChatbotMemory.sh.
+// Java 26 + JBang port of 00_bash/00.03_StreamingChatbotMemory.sh.
 //
 // Same idea as 01.02 but with a conversation memory: the chat completions API
 // is stateless, so the model remembers nothing between two calls. The "memory"
