@@ -27,7 +27,7 @@
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 // Docs: https://docs.quarkiverse.io/quarkus-langchain4j/dev/messages-and-memory.html
 
-// 1️⃣ Include application.properties as a classpath resource so Quarkus reads it.
+// 1) Include application.properties as a classpath resource so Quarkus reads it.
 //FILES application.properties
 
 import dev.langchain4j.service.MemoryId;
@@ -41,7 +41,7 @@ import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
 
-// 2️⃣ The AI Service. Memory is already on: the only new thing is @MemoryId,
+// 2) The AI Service. Memory is already on: the only new thing is @MemoryId,
 // which identifies the conversation this call belongs to. As soon as a
 // parameter is annotated, the prompt itself must be annotated too, hence the
 // @UserMessage on the second parameter.
@@ -51,7 +51,7 @@ interface Assistant {
     Multi<String> chat(@MemoryId String sessionId, @UserMessage String userMessage);
 }
 
-// 3️⃣ Command-mode entry point: @QuarkusMain + QuarkusApplication run in a shell.
+// 3) Command-mode entry point: @QuarkusMain + QuarkusApplication run in a shell.
 @QuarkusMain
 public class _04_03_StreamingChatbotMemory implements QuarkusApplication {
 
@@ -59,7 +59,7 @@ public class _04_03_StreamingChatbotMemory implements QuarkusApplication {
     // would use one id per user or per session instead.
     private static final String SESSION_ID = "cli-session";
 
-    // 4️⃣ The generated AI service is a CDI bean, injected here.
+    // 4) The generated AI service is a CDI bean, injected here.
     @Inject
     Assistant assistant;
 
@@ -85,7 +85,7 @@ public class _04_03_StreamingChatbotMemory implements QuarkusApplication {
             if (userPrompt == null || userPrompt.equals("exit")) break;
             if (userPrompt.isBlank()) continue;
 
-            // 5️⃣ Print the memory as it is BEFORE the call: this is the context
+            // 5) Print the memory as it is BEFORE the call: this is the context
             // the extension is about to resend to the model, in front of our
             // prompt. It is empty on the first turn (nothing was said yet), and
             // grows by two messages (ours + the model's) at every turn.
@@ -93,7 +93,7 @@ public class _04_03_StreamingChatbotMemory implements QuarkusApplication {
             memoryStore.getMessages(SESSION_ID).forEach(IO::println);
             IO.println();
 
-            // 6️⃣ Call the endpoint in streaming mode and print the answer token
+            // 6) Call the endpoint in streaming mode and print the answer token
             // by token. asStream() blocks this thread until the reactive stream
             // completes; on completion the extension stores the full answer in
             // the memory, so the next turn already knows about it.
