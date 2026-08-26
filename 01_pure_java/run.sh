@@ -8,6 +8,7 @@
 #   ./run.sh                              # runs the simple chatbot by default
 #   ./run.sh _01_01_SimpleChatbot.java     # runs a specific example
 #   ./run.sh _01_02_StreamingChatbot.java
+#   ./run.sh _01_03_StreamingChatbotMemory.java
 
 set -euo pipefail
 

@@ -1,0 +1,7 @@
+{
+	"name": "Dev Containers configuration",
+	"image": "wilda/java-devcontainer:26.1.1",
+	containerEnv: {
+		"LANG": "en_US.UTF-8"
+	}
+}
