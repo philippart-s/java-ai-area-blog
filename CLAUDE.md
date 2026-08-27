@@ -171,6 +171,10 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 - **Commits**: conventional format with one emoji right after the type, one idea per commit —
   `feat: ✨ add tool calling example for LangChain4j`, `docs: 📝 ...`, `fix: 🐛 ...`.
   Never commit without being asked.
+- **Commit approval is a two-step gate, never implied.** Propose the message and the file
+  list as text, wait for it to be validated, THEN ask permission to commit, and only then
+  run the command. A general remark about commits (their size, their format) is not an
+  authorization; neither is approval of the work itself. Same rule for `git push`.
 - **Commit authorship**: commits belong to the repository owner. Author and committer are
   whatever `git config user.name` / `user.email` hold — never add a `Co-Authored-By: Claude`
   trailer, a "Generated with Claude Code" line, or any other AI attribution.
