@@ -160,6 +160,9 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 
 - **Java version**: `//JAVA 26+`, and Java 25/26 idioms — records, pattern matching, `var`,
   text blocks, `IO.*`, compact source files. Never `java.util.Date`, never `System.out`.
+- **Work one validated step at a time.** Never deliver a whole feature, or a batch of
+  example files, in a single pass — even a small one. Present a numbered plan, get it
+  agreed, then implement one step, STOP, and wait for validation before the next.
 - **The `java-dev` skill applies to code changes in this repo** (five-phase methodology:
   gather info → git check → plan → implement step by step with validation → validate).
   It does not apply to pure documentation edits like this file.
