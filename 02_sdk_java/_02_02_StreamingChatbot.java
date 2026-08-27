@@ -1,6 +1,6 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA 26+
-//DEPS com.openai:openai-java:4.42.0
+//DEPS com.openai:openai-java:4.52.0
 //
 // Streaming chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b)
 // through the official OpenAI Java SDK (https://github.com/openai/openai-java).
