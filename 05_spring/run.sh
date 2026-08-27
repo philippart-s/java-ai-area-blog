@@ -25,5 +25,8 @@ set +a
 # Default to the simple example if none is provided.
 SCRIPT="${1:-_05_01_SimpleChatbot.java}"
 
-# Run the selected example with JBang.
-jbang "$DIR/$SCRIPT"
+# Run the selected example with JBang, from this script's own directory: the
+# examples that persist their memory write .memory/ next to the script, and the
+# JVM launched by JBang has no way to locate the .java file it runs.
+cd "$DIR"
+jbang "$SCRIPT"
