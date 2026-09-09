@@ -163,6 +163,10 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 - **Work one validated step at a time.** Never deliver a whole feature, or a batch of
   example files, in a single pass — even a small one. Present a numbered plan, get it
   agreed, then implement one step, STOP, and wait for validation before the next.
+- **A step ends with its commit, and the commit ends the turn.** implement → summarise and
+  test → propose the commit message → get it validated → ask permission → commit → then ask
+  whether to move on. Never chain into the next step on your own, even when the plan says
+  what it is.
 - **The `java-dev` skill applies to code changes in this repo** (five-phase methodology:
   gather info → git check → plan → implement step by step with validation → validate).
   It does not apply to pure documentation edits like this file.
