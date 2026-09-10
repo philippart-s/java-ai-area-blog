@@ -29,10 +29,11 @@ and run it.
 | 3. Conversation memory | `00.03_StreamingChatbotMemory.sh` | `_01_03_StreamingChatbotMemory` | `_02_03_StreamingChatbotMemory` | `_03_03_StreamingChatbotMemory`           | `_04_03_StreamingChatbotMemory` | `_05_03_StreamingChatbotMemory` |
 | 4. Multi-session memory | —                              | —                             | —                             | `_03_04_StreamingChatbotMultiSessionMemory` | folded into `_04_03` (`@MemoryId`) | folded into `_05_03` (conversation id) |
 
-**Rule of thumb**: an example of column N is a *port* of the same example in column N-1,
-and an example of row M is the same example as row M-1 *plus one idea*. The header
-comment of each file states both explicitly ("Java 26 + JBang port of ...", "Same idea as
-_04_02 but with ..."). Keep that chain intact when you add a file.
+**Rule of thumb**: an example of row M is the same example as row M-1 *plus one idea*, and
+an example of column N does what column N-1 does with different tools. But **every script
+is self-contained**: no comment ever names another example, in the same directory or not.
+Describe what the file does, never what it does *compared to* another one — the examples
+have no technical relationship and must be free to evolve independently.
 
 ## Repository layout
 
@@ -83,10 +84,9 @@ Every `.java` file follows the same skeleton. Reproduce it exactly.
 //
 // <One-line summary> calling OVHcloud AI Endpoints (gpt-oss-120b)
 // through <the library> (<link to its repo/docs>).
-// <"Java 26 + JBang port of X" or "Same idea as Y but with Z">
 //
-// <Two or three paragraphs explaining the ONE new idea of this file,
-//  and explicitly comparing it to the previous step.>
+// <A short paragraph on what this file does. A few lines, not an essay,
+//  and self-contained: never name another example.>
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 // Docs: <framework doc page for the feature being shown>
@@ -108,6 +108,11 @@ Notes:
 
 - `04_quarkus` and `05_spring` cannot use a compact source file: they need a `public class`
   named exactly like the file (`@QuarkusMain` / `@SpringBootConfiguration` entry point).
+- **Write ordinary developer comments.** What a line does, why a non-obvious choice was
+  made, a gotcha worth flagging — nothing more. No multi-paragraph essays on a framework's
+  design, no narrative arcs, no cross-references to other examples beyond the single
+  port/parent line of the header. The analysis belongs in the article, not in the source.
+  Keep the header block to the size of the existing ones: **15 to 20 lines**.
 - Numbered inline comments (`// 1)`, `// 2)`, ...) walk the reader through the flow in the
   more involved examples. Use them when the file has more than ~4 meaningful stages.
 - Emoji banners delimit the output and must stay identical across stacks:
@@ -143,12 +148,13 @@ Checklist, in order:
 1. **Decide the scope**: one new idea, and only one. If it needs two, it is two steps.
 2. **Start from bash** (`00_bash`) when the idea is visible at the HTTP level (streaming,
    memory, tools). It is the reference implementation everything else is compared against.
-3. **Port upwards**, one directory at a time, `01` → `05`. Each port keeps the same output
-   and the same banners; only the code that produces them shrinks.
+3. **Work upwards**, one directory at a time, `01` → `05`. Each one keeps the same output
+   and the same banners; only the code that produces them shrinks. They are independent
+   implementations, not translations of one another.
 4. **Numbering**: `_0<stack>_0<step>_<PascalCaseName>.java`, bash uses `00.0<step>_...sh`.
    The name is the same across stacks so the files line up in a table.
-5. **Header comment**: state the port/parent relationship and add the `Docs:` links for the
-   feature being introduced.
+5. **Header comment**: a couple of lines describing what the script does, plus the `Docs:`
+   links for the feature being introduced. Self-contained — never name another example.
 6. **Update the `run.sh` usage block** of every touched directory.
 7. **Update the progression matrix** in this file and in `README.md`.
 8. **Verify** the example actually runs (`./run.sh <file>`) before proposing a commit.
