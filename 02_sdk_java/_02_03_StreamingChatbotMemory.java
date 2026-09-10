@@ -5,21 +5,16 @@
 // Streaming chatbot with memory example calling OVHcloud AI Endpoints
 // (gpt-oss-120b) through the official OpenAI Java SDK
 // (https://github.com/openai/openai-java).
-// Java 26 + JBang port of 01_pure_java/_01_03_StreamingChatbotMemory.java.
 //
-// Same idea as _02_02 but with a conversation memory: the chat completions API
-// is stateless, so the model remembers nothing between two calls. The "memory"
-// is entirely on the client side and must be sent back, in full, on every
-// request. With the SDK there is no messages array to maintain by hand: we keep
-// the ChatCompletionCreateParams.Builder alive and keep adding messages to it,
-// so the builder IS the memory.
+// The chat completions API is stateless, so the conversation must be resent in
+// full on every call. There is no messages array to maintain by hand: the
+// ChatCompletionCreateParams.Builder is kept alive and messages are added to
+// it, so the builder IS the memory.
 //
-// Streaming makes one thing slightly harder: the answer arrives in pieces, but
-// the memory needs it whole. ChatCompletionAccumulator rebuilds the complete
-// ChatCompletion from the chunks, so we can add the answer back to the memory.
+// Streaming makes one thing harder: the answer arrives in pieces but the memory
+// needs it whole, so ChatCompletionAccumulator rebuilds it from the chunks.
 //
-// The program loops so you can chat with the model. Type "exit" (or press
-// Ctrl+D) to quit.
+// Type "exit" (or press Ctrl+D) to quit.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 
@@ -31,23 +26,19 @@ import com.openai.models.chat.completions.ChatCompletionChunk;
 import com.openai.models.chat.completions.ChatCompletionCreateParams;
 
 void main() {
-    // OVHcloud AI Endpoints configuration.
-    // baseUrl points at the OpenAI-compatible endpoint (note the /v1 suffix);
-    // the token is read from the OVH_AI_ENDPOINTS_ACCESS_TOKEN environment variable.
+    // baseUrl must include the /v1 suffix. The token is read from
+    // OVH_AI_ENDPOINTS_ACCESS_TOKEN, exported by run.sh from .env.
     final String baseUrl = "https://oai.endpoints.kepler.ai.cloud.ovh.net/v1";
     final String model = "gpt-oss-120b";
     final String token = System.getenv("OVH_AI_ENDPOINTS_ACCESS_TOKEN");
 
-    // Build the SDK client, pointed at OVHcloud AI Endpoints.
     OpenAIClient client = OpenAIOkHttpClient.builder()
             .baseUrl(baseUrl)
             .apiKey(token)
             //.logLevel(LogLevel.DEBUG)
             .build();
 
-    // The params builder is the conversation memory: it is seeded with the
-    // system message, then every user prompt and every model answer is added to
-    // it. build() is called at each turn and returns the WHOLE conversation.
+    // The memory. build() is called at each turn and returns the whole conversation.
     var paramsBuilder = ChatCompletionCreateParams.builder()
             .model(model)
             .addSystemMessage("provide a concise answer");
@@ -56,30 +47,22 @@ void main() {
     IO.println();
 
     while (true) {
-        // Ask the user for a prompt.
         var userPrompt = IO.readln("⌨️  Your prompt: ");
         IO.println();
 
-        // Leave the loop on "exit", or on end of input (Ctrl+D).
         if (userPrompt == null || userPrompt.equals("exit")) break;
         if (userPrompt.isBlank()) continue;
 
-        // 1) Append the user message to the memory.
         paramsBuilder.addUserMessage(userPrompt);
 
-        // 2) Print the messages of the request (typed SDK objects, the rest of
-        // the params is left out to keep the output readable): notice how the
-        // list grows at each turn. The WHOLE memory is sent again.
+        // Only the messages are printed; the rest of the params would drown the output.
         var params = paramsBuilder.build();
         IO.println("===== ⬆️ REQUEST (memory sent to the model) ⬆️ =====");
         params.messages().forEach(IO::println);
         IO.println();
 
-        // 3) Call the endpoint in streaming mode and print the answer token by
-        // token. The accumulator collects the chunks along the way (peek) and
-        // rebuilds the complete ChatCompletion, exactly as the non-streaming
-        // call would have returned it.
-        // The StreamResponse is AutoCloseable, so we close it with try-with-resources.
+        // peek() feeds the accumulator, which rebuilds the complete
+        // ChatCompletion the non-streaming call would have returned.
         IO.println("===== 🤖 ANSWER (streaming) 🤖 =====");
         var accumulator = ChatCompletionAccumulator.create();
         try (StreamResponse<ChatCompletionChunk> stream =
@@ -91,24 +74,17 @@ void main() {
                     .forEach(IO::print);
         }
 
-        // Newlines once the stream is complete.
         IO.println();
         IO.println();
 
-        // 4) Append the model answer to the memory, so the next call gets the
-        // full conversation: this is what makes the model look like it
-        // remembers. This is NOT a second pass over the stream: the stream is
-        // already consumed and only gave us text fragments. What we add here is
-        // the single message reassembled by the accumulator, taken as is.
-        // (choices() is a list because the API can return several completions,
-        // but there is only one here since we did not ask for more.)
+        // The stream is consumed and only gave text fragments; what goes into
+        // the memory is the message reassembled by the accumulator.
         paramsBuilder.addMessage(accumulator.chatCompletion()
                 .choices()
                 .getFirst()
                 .message());
     }
 
-    // Print the final memory: the whole conversation, kept client side.
     IO.println("===== 🧠 FINAL MEMORY (the whole conversation) 🧠 =====");
     paramsBuilder.build().messages().forEach(IO::println);
 }
