@@ -45,7 +45,15 @@ import reactor.core.publisher.Flux;
 public class _05_02_StreamingChatbot {
 
     public static void main(String[] args) {
-        SpringApplication.run(_05_02_StreamingChatbot.class, args);
+        // SpringApplication.run() alone is not enough to end a STREAMING example:
+        // the OpenAI client underneath Spring AI opens a cached thread pool on the
+        // first streamed call, its threads are not daemons, and the JVM then waits
+        // out their 60s idle timeout before exiting. SpringApplication.exit()
+        // closes the context and returns the exit code, System.exit() then leaves
+        // immediately instead of waiting. This is the documented shape for a
+        // Spring Boot command-line application that must terminate.
+        System.exit(SpringApplication.exit(
+                SpringApplication.run(_05_02_StreamingChatbot.class, args)));
     }
 
     // CommandLineRunner is the Spring Boot equivalent of a command-mode entry
