@@ -33,6 +33,7 @@ unchanged, just pointed at a different base URL.
 | 2. Streaming            | `00.02_StreamingChatbot.sh`       | `_01_02_StreamingChatbot`       | `_02_02_StreamingChatbot`       | `_03_02_StreamingChatbot`                   | `_04_02_StreamingChatbot`       | `_05_02_StreamingChatbot`       |
 | 3. Conversation memory  | `00.03_StreamingChatbotMemory.sh` | `_01_03_StreamingChatbotMemory` | `_02_03_StreamingChatbotMemory` | `_03_03_StreamingChatbotMemory`             | `_04_03_StreamingChatbotMemory` | `_05_03_StreamingChatbotMemory` |
 | 4. Multi-session memory | —                                 | —                               | —                               | `_03_04_StreamingChatbotMultiSessionMemory` | shown in `_04_03`               | shown in `_05_03`               |
+| 5. File memory          | `00.04_StreamingChatbotFileMemory.sh` | `_01_04_StreamingChatbotFileMemory` | `_02_04_StreamingChatbotFileMemory` | `_03_05_StreamingChatbotFileMemory`     | `_04_04_StreamingChatbotFileMemory` | `_05_04_StreamingChatbotFileMemory` |
 
 Reading a line across gives you the same program written six ways. Reading a column down
 gives you one stack learning to stream, then to remember.
@@ -69,15 +70,18 @@ echo 'OVH_AI_ENDPOINTS_ACCESS_TOKEN=<your-token>' > .env
 JBang:
 
 ```bash
-01_pure_java/run.sh                                    # runs the first example by default
-01_pure_java/run.sh _01_03_StreamingChatbotMemory.java # or pick one
-03_langchain4j/run.sh _03_04_StreamingChatbotMultiSessionMemory.java
+cd 01_pure_java
+./run.sh                                    # the first example, by default
+./run.sh _01_04_StreamingChatbotFileMemory.java
 ```
 
 > The first run of `04_quarkus` or `05_spring` downloads the whole framework and takes a
 > while. Later runs are fast.
 
 Type `exit` (or Ctrl+D) to leave the examples that loop.
+
+The `*FileMemory` examples store their conversation in `<stack>/.memory/<id>.json`, one
+file per conversation id. That directory is git-ignored; delete a file to start over.
 
 ## What is shared by every example
 
@@ -88,6 +92,10 @@ So that the files can be compared side by side:
 - the same emoji-delimited output sections (`⬆️ JSON REQUEST`, `🤖 ANSWER`, `🧠 MEMORY`…);
 - comments in **English**, because the blog posts are published in several languages.
 
+Each script is **self-contained**: none of them refers to another example. Two files on the
+same row do the same thing with different tools, but they are independent implementations,
+not translations of one another.
+
 ## Contributing
 
 Contributions that extend the progression are welcome. A few things to know first:
@@ -96,8 +104,10 @@ Contributions that extend the progression are welcome. A few things to know firs
   abstraction layer, some deliberate duplication between files. Each file must be readable
   on its own, in a browser, out of context.
 - **One idea per example.** If a change introduces two concepts, it is two examples.
-- **Keep the chain intact.** Each file's header comment says which file it is a port of, or
-  which one it extends. New files must do the same.
+- **Keep every script self-contained.** No comment may name another example: describe what
+  the file does, never what it does compared to another one.
+- **Write plain developer comments.** What a line does, why a non-obvious choice was made,
+  a gotcha worth flagging. The explaining belongs in the blog post, not in the source.
 - **Keep the invariants.** Same endpoint, same model, same prompts, same output banners.
 - **Pin dependency versions** per file, and bump a whole directory in one commit — a
   published article must keep working.

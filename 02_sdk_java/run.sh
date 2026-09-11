@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 #
-# Simple launcher for the OpenAI-SDK Java (JBang) examples.
-# It loads the API key from the project-root .env, then runs the chosen
-# example with JBang.
+# Launcher for the OpenAI Java SDK examples: loads the token from the project-root .env,
+# then runs the chosen example with JBang from this directory.
 #
 # Usage:
-#   ./run.sh                              # runs the simple chatbot by default
-#   ./run.sh _02_01_SimpleChatbot.java    # runs a specific example
+#   ./run.sh                        # defaults to _02_01_SimpleChatbot.java
 #   ./run.sh _02_02_StreamingChatbot.java
 #   ./run.sh _02_03_StreamingChatbotMemory.java
+#   ./run.sh _02_04_StreamingChatbotFileMemory.java
 
 set -euo pipefail
 

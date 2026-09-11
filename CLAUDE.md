@@ -28,6 +28,7 @@ and run it.
 | 2. Streaming           | `00.02_StreamingChatbot.sh`     | `_01_02_StreamingChatbot`     | `_02_02_StreamingChatbot`     | `_03_02_StreamingChatbot`                   | `_04_02_StreamingChatbot`     | `_05_02_StreamingChatbot`     |
 | 3. Conversation memory | `00.03_StreamingChatbotMemory.sh` | `_01_03_StreamingChatbotMemory` | `_02_03_StreamingChatbotMemory` | `_03_03_StreamingChatbotMemory`           | `_04_03_StreamingChatbotMemory` | `_05_03_StreamingChatbotMemory` |
 | 4. Multi-session memory | —                              | —                             | —                             | `_03_04_StreamingChatbotMultiSessionMemory` | folded into `_04_03` (`@MemoryId`) | folded into `_05_03` (conversation id) |
+| 5. File memory         | `00.04_StreamingChatbotFileMemory.sh` | `_01_04_StreamingChatbotFileMemory` | `_02_04_StreamingChatbotFileMemory` | `_03_05_StreamingChatbotFileMemory` | `_04_04_StreamingChatbotFileMemory` | `_05_04_StreamingChatbotFileMemory` |
 
 **Rule of thumb**: an example of row M is the same example as row M-1 *plus one idea*, and
 an example of column N does what column N-1 does with different tools. But **every script
@@ -49,7 +50,8 @@ have no technical relationship and must be free to evolve independently.
 │   └── application.properties        # injected via //FILES
 ├── 05_spring/                        # Spring Boot command mode + Spring AI
 │   └── application.properties        # injected via //FILES
-└── 0X_*/run.sh                       # per-directory launcher (sources ../.env, calls jbang)
+├── 0X_*/run.sh                       # per-directory launcher (cd's in, sources ../.env, calls jbang)
+└── 0X_*/.memory/                     # 🤫 git-ignored, conversations of the *FileMemory examples
 ```
 
 ## Invariants — do not diverge from these
@@ -66,6 +68,7 @@ makes the files comparable side by side in an article.
 | System prompt        | `provide a concise answer`                                        |
 | Memory window        | 10 messages                                                       |
 | Multi-session ids    | `cli-session`, or `stephane` / `fanny` for the scripted demo      |
+| Persisted memory     | `<stack>/.memory/<id>.json`, one file per conversation id         |
 | Comment language     | **English** (the blog posts are multilingual)                     |
 | Console I/O          | `IO.println` / `IO.print` / `IO.readln` — **never** `System.out`   |
 | Exit condition       | typing `exit`, or Ctrl+D / Ctrl+C                                 |
@@ -221,7 +224,7 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 | `02_sdk_java`    | `com.openai:openai-java:4.52.0`                                               |
 | `03_langchain4j` | `dev.langchain4j:langchain4j{,-open-ai}:1.18.0`, `slf4j-simple:2.0.17`        |
 | `04_quarkus`     | `quarkus-bom:3.33.2`, `quarkus-langchain4j-openai:1.12.0`                     |
-| `05_spring`      | `spring-boot-dependencies:4.1.0`, `spring-ai-bom:2.0.0`, `aspectjweaver:1.9.25.1` |
+| `05_spring`      | `spring-boot-dependencies:4.1.0`, `spring-ai-bom:2.0.0`, `aspectjweaver:1.9.25.1`, `jackson-databind:2.21.4` |
 
 Stack-specific gotchas already encoded in the files, keep them:
 
@@ -233,3 +236,15 @@ Stack-specific gotchas already encoded in the files, keep them:
   `@SpringBootApplication`, because a single file in the default package would component-scan
   the whole classpath.
 - Spring needs `jakarta.servlet-api` on the classpath even though the app is non-web.
+- A STREAMING Spring example must end with
+  `System.exit(SpringApplication.exit(SpringApplication.run(...)))`: the OpenAI client
+  opens a non-daemon cached thread pool and the JVM otherwise waits out its 60s idle
+  timeout.
+- A JBang script cannot locate its own `.java` file, so `.memory/` is resolved against the
+  current directory and every `run.sh` `cd`s into its own directory first. Bash examples
+  use `$(dirname "$0")` instead and need no `cd`.
+- In Quarkus command mode the extension clears the chat memory when the CDI scope ends,
+  which for a CLI is every exit — a persistent store therefore needs a `ChatMemory` whose
+  `clear()` is a no-op (see `04_quarkus/_04_04`).
+- Spring AI ships no message serializer: a file-backed `ChatMemoryRepository` stores the
+  message type and text itself, like its own `JdbcChatMemoryRepository`.

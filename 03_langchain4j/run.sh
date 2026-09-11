@@ -1,15 +1,14 @@
 #!/usr/bin/env bash
 #
-# Simple launcher for the LangChain4j Java (JBang) examples.
-# It loads the API key from the project-root .env, then runs the chosen
-# example with JBang.
+# Launcher for the LangChain4j examples: loads the token from the project-root .env,
+# then runs the chosen example with JBang from this directory.
 #
 # Usage:
-#   ./run.sh                                 # runs the simple chatbot by default
-#   ./run.sh _03_01_SimpleChatbot.java       # runs a specific example
+#   ./run.sh                        # defaults to _03_01_SimpleChatbot.java
 #   ./run.sh _03_02_StreamingChatbot.java
 #   ./run.sh _03_03_StreamingChatbotMemory.java
 #   ./run.sh _03_04_StreamingChatbotMultiSessionMemory.java
+#   ./run.sh _03_05_StreamingChatbotFileMemory.java
 
 set -euo pipefail
 

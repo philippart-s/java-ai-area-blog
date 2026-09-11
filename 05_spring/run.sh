@@ -1,15 +1,13 @@
 #!/usr/bin/env bash
 #
-# Simple launcher for the Spring AI (JBang) examples.
-# It loads the API token from the project-root .env into the environment
-# (application.properties reads it via the ${OVH_AI_ENDPOINTS_ACCESS_TOKEN}
-# placeholder), then runs the chosen example with JBang as a Spring Boot app.
+# Launcher for the Spring AI examples: loads the token from the project-root .env,
+# then runs the chosen example with JBang from this directory.
 #
 # Usage:
-#   ./run.sh                                 # runs the simple chatbot by default
-#   ./run.sh _05_01_SimpleChatbot.java       # runs a specific example
+#   ./run.sh                        # defaults to _05_01_SimpleChatbot.java
 #   ./run.sh _05_02_StreamingChatbot.java
 #   ./run.sh _05_03_StreamingChatbotMemory.java
+#   ./run.sh _05_04_StreamingChatbotFileMemory.java
 
 set -euo pipefail
 

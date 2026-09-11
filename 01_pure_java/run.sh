@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 #
-# Simple launcher for the Java (JBang) examples.
-# It loads the API key from the project-root .env, then runs the chosen
-# example with JBang.
+# Launcher for the pure Java examples: loads the token from the project-root .env,
+# then runs the chosen example with JBang from this directory.
 #
 # Usage:
-#   ./run.sh                              # runs the simple chatbot by default
-#   ./run.sh _01_01_SimpleChatbot.java     # runs a specific example
+#   ./run.sh                        # defaults to _01_01_SimpleChatbot.java
 #   ./run.sh _01_02_StreamingChatbot.java
 #   ./run.sh _01_03_StreamingChatbotMemory.java
+#   ./run.sh _01_04_StreamingChatbotFileMemory.java
 
 set -euo pipefail
 
