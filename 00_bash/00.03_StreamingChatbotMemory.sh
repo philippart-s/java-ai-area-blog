@@ -3,18 +3,11 @@
 # Streaming chatbot with memory example calling OVHcloud AI Endpoints
 # (gpt-oss-120b).
 #
-# The chat completions API is stateless: the memory is a JSON array of messages
-# kept client side and resent in full on every request. The streamed answer is
-# reassembled on the fly so it can be appended to it.
-#
 # The messages array is printed before each call, so the memory can be seen
-# growing turn after turn. Type "exit" (or press Ctrl+C) to quit.
-#
-# Needs curl and jq.
+# growing. Type "exit" (or press Ctrl+C) to quit. Needs curl and jq.
 #
 # Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 
-# The .env at the project root must contain: OVH_AI_ENDPOINTS_ACCESS_TOKEN=...
 set -a
 source "$(dirname "$0")/../.env"
 set +a

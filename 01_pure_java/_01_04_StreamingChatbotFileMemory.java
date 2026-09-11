@@ -3,14 +3,10 @@
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.18.2
 //
 // Streaming chatbot with a persistent memory example calling OVHcloud AI
-// Endpoints (gpt-oss-120b).
+// Endpoints (gpt-oss-120b), with the JDK HttpClient and Jackson.
 //
-// The chat completions API is stateless: the memory is the messages array, kept
-// client side and resent in full on every call. Here it is also read from and
-// written to a JSON file, so the conversation survives quitting the program.
-// Run it twice.
-//
-// Type "exit" (or press Ctrl+D) to quit.
+// The conversation is stored in .memory/<session>.json, so it survives quitting
+// the program. Run it twice. Type "exit" (or press Ctrl+D) to quit.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 

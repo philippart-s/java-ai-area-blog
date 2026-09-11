@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 #
 # Streaming chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b).
-# With "stream": true the endpoint answers with Server-Sent Events, so the
-# answer is printed token by token as the chunks arrive.
 #
-# Needs curl and jq.
+# The answer is printed token by token. Needs curl and jq.
 #
 # Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 
-# The .env at the project root must contain: OVH_AI_ENDPOINTS_ACCESS_TOKEN=...
 set -a
 source "$(dirname "$0")/../.env"
 set +a

@@ -2,10 +2,10 @@
 //JAVA 26+
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.18.2
 //
-// Streaming chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b).
+// Streaming chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b),
+// with the JDK HttpClient and Jackson.
 //
-// With "stream": true the endpoint answers with Server-Sent Events, so the
-// answer is printed token by token as the chunks arrive.
+// The answer is printed token by token.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 

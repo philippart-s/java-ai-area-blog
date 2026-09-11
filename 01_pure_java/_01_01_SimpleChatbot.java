@@ -2,10 +2,8 @@
 //JAVA 26+
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.18.2
 //
-// Simple chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b).
-//
-// HTTP -> java.net.http.HttpClient (JDK built-in, no framework)
-// JSON -> Jackson
+// Simple chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b),
+// with the JDK HttpClient and Jackson.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 

@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 #
 # Simple chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b).
-# Sends one prompt to the OpenAI-compatible chat completions endpoint and prints
-# the request, the full JSON response, and the answer alone.
 #
 # Needs curl and jq.
 #
 # Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 
-# The .env at the project root must contain: OVH_AI_ENDPOINTS_ACCESS_TOKEN=...
 set -a
 source "$(dirname "$0")/../.env"
 set +a

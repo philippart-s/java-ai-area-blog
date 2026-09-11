@@ -5,9 +5,6 @@
 // Simple chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b)
 // through the official OpenAI Java SDK (https://github.com/openai/openai-java).
 //
-// AI Endpoints is OpenAI-compatible: point the SDK's baseUrl at it and pass the
-// OVH token as the apiKey. The SDK does the HTTP and the JSON.
-//
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 
 import com.openai.client.OpenAIClient;

@@ -3,18 +3,12 @@
 # Streaming chatbot with a persistent memory example calling OVHcloud AI
 # Endpoints (gpt-oss-120b).
 #
-# The chat completions API is stateless: the memory is a JSON array of messages
-# kept client side and resent in full on every request. Here it is also read
-# from and written to a file, so the conversation survives quitting the script.
-# Run it twice.
-#
-# Type "exit" (or press Ctrl+C) to quit.
-#
+# The conversation is stored in .memory/<session>.json, so it survives quitting
+# the script. Run it twice. Type "exit" (or press Ctrl+C) to quit.
 # Needs curl and jq.
 #
 # Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 
-# The .env at the project root must contain: OVH_AI_ENDPOINTS_ACCESS_TOKEN=...
 set -a
 source "$(dirname "$0")/../.env"
 set +a

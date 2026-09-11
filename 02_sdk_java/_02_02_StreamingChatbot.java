@@ -5,8 +5,7 @@
 // Streaming chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b)
 // through the official OpenAI Java SDK (https://github.com/openai/openai-java).
 //
-// createStreaming() returns a StreamResponse of chunks and handles the SSE
-// parsing; each chunk's delta content is printed as it arrives.
+// The answer is printed token by token.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 

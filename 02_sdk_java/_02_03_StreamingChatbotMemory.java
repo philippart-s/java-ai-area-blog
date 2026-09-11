@@ -6,14 +6,6 @@
 // (gpt-oss-120b) through the official OpenAI Java SDK
 // (https://github.com/openai/openai-java).
 //
-// The chat completions API is stateless, so the conversation must be resent in
-// full on every call. There is no messages array to maintain by hand: the
-// ChatCompletionCreateParams.Builder is kept alive and messages are added to
-// it, so the builder IS the memory.
-//
-// Streaming makes one thing harder: the answer arrives in pieces but the memory
-// needs it whole, so ChatCompletionAccumulator rebuilds it from the chunks.
-//
 // Type "exit" (or press Ctrl+D) to quit.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/

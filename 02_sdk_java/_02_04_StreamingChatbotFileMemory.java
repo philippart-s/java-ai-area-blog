@@ -6,17 +6,11 @@
 // Endpoints (gpt-oss-120b) through the official OpenAI Java SDK
 // (https://github.com/openai/openai-java).
 //
-// The chat completions API is stateless, so the conversation must be resent in
-// full on every call. The ChatCompletionCreateParams.Builder holds it, and its
-// messages are read from and written to a JSON file, so the conversation
-// survives quitting the program. Run it twice.
+// The conversation is stored in .memory/<session>.json, so it survives quitting
+// the program. Run it twice. Type "exit" (or press Ctrl+D) to quit.
 //
-// The SDK has no memory or persistence API. Its stateful endpoints (Responses
-// with store=true, Conversations) keep the conversation on the provider's
-// servers, and AI Endpoints does not support them: it requires store=false and
-// answers 400 "stateful mode not supported".
-//
-// Type "exit" (or press Ctrl+D) to quit.
+// AI Endpoints does not support the SDK's stateful endpoints (Responses with
+// store=true, Conversations): it requires store=false and answers 400.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 // Docs: https://docs.ovhcloud.com/en/guides/public-cloud/ai-machine-learning/ai-endpoints-responses-api#multi-turn-conversations
