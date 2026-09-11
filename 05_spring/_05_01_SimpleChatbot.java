@@ -12,21 +12,13 @@
 //
 // Simple chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b)
 // through Spring AI (https://docs.spring.io/spring-ai/reference/).
-// Spring Boot command-mode port of 04_quarkus/_04_01_SimpleChatbot.java.
 //
-// This is a single-file Spring Boot application run by JBang. Spring AI's OpenAI
-// starter auto-configures a ChatClient.Builder from application.properties; we
-// inject it into a CommandLineRunner and talk to the model with the fluent
-// ChatClient API. No manual HTTP, no manual client wiring.
-//
-// OVHcloud AI Endpoints is OpenAI-compatible, so we use the OpenAI starter and
-// point its base-url at OVH. All settings (base-url, model, api-key) live in
-// application.properties; the api-key there is a ${OVH_AI_ENDPOINTS_ACCESS_TOKEN}
-// placeholder resolved at runtime from the environment.
+// Single-file Spring Boot application run by JBang. Base URL, model and api-key
+// live in application.properties, included via //FILES below.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
+// Docs: https://docs.spring.io/spring-ai/reference/api/chatclient.html
 
-// Include application.properties as a classpath resource so Spring reads it.
 //FILES application.properties
 
 import org.springframework.ai.chat.client.ChatClient;
@@ -36,9 +28,8 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
-// NOT @SpringBootApplication: this single file lives in the default package, and
-// its @ComponentScan would scan the whole classpath (breaking Spring's internal
-// config). We only need auto-config + the local @Bean, so we drop the scan.
+// NOT @SpringBootApplication: this file lives in the default package, so its
+// @ComponentScan would scan the whole classpath and break Spring's own config.
 @SpringBootConfiguration
 @EnableAutoConfiguration
 public class _05_01_SimpleChatbot {
@@ -47,18 +38,14 @@ public class _05_01_SimpleChatbot {
         SpringApplication.run(_05_01_SimpleChatbot.class, args);
     }
 
-    // CommandLineRunner is the Spring Boot equivalent of a command-mode entry
-    // point: it runs after the context starts, then the app exits (no web server).
     @Bean
     CommandLineRunner run(ChatClient.Builder builder) {
         return args -> {
             var chatClient = builder.build();
 
-            // Ask the user for a prompt.
             var userPrompt = IO.readln("⌨️ Your prompt: ");
             IO.println();
 
-            // Call the endpoint (blocking, non-streaming) and print the answer.
             IO.println("===== 🤖 ANSWER 🤖 =====");
             IO.println(chatClient.prompt()
                     .user(userPrompt)
