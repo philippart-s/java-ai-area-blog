@@ -7,24 +7,15 @@
 //DEPS io.quarkiverse.langchain4j:quarkus-langchain4j-openai:1.12.0
 //
 // Simple chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b)
-// through Quarkus + quarkus-langchain4j (https://github.com/quarkiverse/quarkus-langchain4j).
-// Quarkus command-mode port of 03_langchain4j/_03_01_SimpleChatbot.java.
+// through Quarkus + quarkus-langchain4j
+// (https://github.com/quarkiverse/quarkus-langchain4j).
 //
-// This is a single-file Quarkus application run by JBang: JBang sees the Quarkus
-// BOM/extension and triggers Quarkus build-time augmentation automatically.
-// Instead of building a model by hand, we DECLARE the model in configuration
-// (in application.properties, included via the //FILES directive below) and
-// DECLARE the AI service as an interface (@RegisterAiService). Quarkus generates
-// the implementation and injects it.
-//
-// OVHcloud AI Endpoints is OpenAI-compatible, so we use the OpenAI extension and
-// point its base-url at OVH. All settings (base-url, model, api-key) live in
-// application.properties; the api-key there is a ${OVH_AI_ENDPOINTS_ACCESS_TOKEN}
-// expression resolved at runtime from the environment.
+// Single-file Quarkus application run by JBang. Base URL, model and api-key
+// live in application.properties, included via //FILES below.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
+// Docs: https://docs.quarkiverse.io/quarkus-langchain4j/dev/
 
-// Include application.properties as a classpath resource so Quarkus reads it.
 //FILES application.properties
 
 import io.quarkiverse.langchain4j.RegisterAiService;
@@ -33,10 +24,6 @@ import io.quarkus.runtime.annotations.QuarkusMain;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
 
-import java.util.Scanner;
-
-// The AI Service: a plain interface. Quarkus generates the implementation at
-// build time and wires it to the configured OpenAI model. No manual client.
 @RegisterAiService
 interface Assistant {
     // Uncomment to give the assistant a system prompt:
@@ -44,11 +31,9 @@ interface Assistant {
     String chat(String userMessage);
 }
 
-// Command-mode entry point: @QuarkusMain + QuarkusApplication run in a shell.
 @QuarkusMain
 public class _04_01_SimpleChatbot implements QuarkusApplication {
 
-    // The generated AI service is a CDI bean, injected here.
     @Inject
     Assistant assistant;
 
@@ -56,10 +41,8 @@ public class _04_01_SimpleChatbot implements QuarkusApplication {
     @Override
     @ActivateRequestContext
     public int run(String... args) {
-        // Ask the user for a prompt.
         var userPrompt = IO.readln("⌨️ Your prompt: ");
 
-        // Call the endpoint (blocking, non-streaming) and print the answer.
         IO.println("===== 🤖 ANSWER 🤖 =====");
         IO.println(assistant.chat(userPrompt));
         return 0;
