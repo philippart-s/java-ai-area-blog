@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 #
-# Streaming chatbot with memory example calling OVHcloud AI Endpoints
-# (gpt-oss-120b).
+# Streaming chatbot with a persistent memory example calling OVHcloud AI
+# Endpoints (gpt-oss-120b).
 #
-# The messages array is printed before each call, so the memory can be seen
-# growing. Type "exit" (or press Ctrl+C) to quit. Needs curl and jq.
+# The conversation is stored in .memory/<session>.json, so it survives quitting
+# the script. Run it twice. Type "exit" (or press Ctrl+C) to quit.
+# Needs curl and jq.
 #
 # Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 
@@ -15,12 +16,30 @@ set +a
 ENDPOINT="https://oai.endpoints.kepler.ai.cloud.ovh.net/v1/chat/completions"
 MODEL="gpt-oss-120b"
 
-# The memory, seeded with the system message.
-MESSAGES=$(jq -n '[
-  { role: "system", content: "provide a concise answer" }
-]')
+# Stored next to this script whatever the current directory, thanks to $0.
+# One file per session id, so another id is another conversation.
+SESSION_ID="cli-session"
+MEMORY_DIR="$(dirname "$0")/.memory"
+MEMORY_FILE="$MEMORY_DIR/$SESSION_ID.json"
 
-echo "===== 🧠 CHATBOT WITH MEMORY (type \"exit\" to quit) 🧠 ====="
+mkdir -p "$MEMORY_DIR"
+
+# The memory is already JSON, so loading it is a cat.
+if [ -s "$MEMORY_FILE" ]; then
+  MESSAGES=$(cat "$MEMORY_FILE")
+  echo "===== 🧠 MEMORY RESTORED FROM DISK ($(echo "$MESSAGES" | jq 'length') messages) 🧠 ====="
+  echo "$MESSAGES" | jq .
+  echo
+else
+  MESSAGES=$(jq -n '[
+    { role: "system", content: "provide a concise answer" }
+  ]')
+  echo "===== 🧠 NO MEMORY YET, STARTING A NEW CONVERSATION 🧠 ====="
+  echo
+fi
+
+echo "===== 🧠 CHATBOT WITH PERSISTENT MEMORY (type \"exit\" to quit) 🧠 ====="
+echo "💾 stored in $MEMORY_FILE"
 echo
 
 while true; do
@@ -40,7 +59,6 @@ while true; do
     messages: $messages
   }')
 
-  # The whole memory is sent again, and it grows by two messages per turn.
   echo "===== ⬆️ JSON REQUEST (memory sent to the model) ⬆️ ====="
   echo "$BODY" | jq .
   echo
@@ -69,7 +87,14 @@ while true; do
 
   MESSAGES=$(echo "$MESSAGES" | jq --arg content "$ANSWER" \
     '. + [ { role: "assistant", content: $content } ]')
+
+  # Written after every answer, so an interrupted session is still saved.
+  echo "$MESSAGES" > "$MEMORY_FILE"
+  echo "💾 memory saved to $MEMORY_FILE ($(echo "$MESSAGES" | jq 'length') messages)"
+  echo
 done
 
-echo "===== 🧠 FINAL MEMORY (the whole conversation) 🧠 ====="
+echo "===== 🧠 FINAL MEMORY (kept in $MEMORY_FILE) 🧠 ====="
 echo "$MESSAGES" | jq .
+echo
+echo "🗑️  Delete $MEMORY_FILE to start a fresh conversation."

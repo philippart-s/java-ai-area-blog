@@ -31,3 +31,6 @@ replay_pid*
 .idea/
 *.iml
 .vscode/
+
+# 🧠 Conversation memory persisted to disk by the *FileMemory examples
+.memory/

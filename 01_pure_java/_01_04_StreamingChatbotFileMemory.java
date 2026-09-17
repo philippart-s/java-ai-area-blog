@@ -2,15 +2,16 @@
 //JAVA 26+
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.18.2
 //
-// Streaming chatbot with memory example calling OVHcloud AI Endpoints
-// (gpt-oss-120b), with the JDK HttpClient and Jackson.
+// Streaming chatbot with a persistent memory example calling OVHcloud AI
+// Endpoints (gpt-oss-120b), with the JDK HttpClient and Jackson.
 //
-// The messages array is printed before each call, so the memory can be seen
-// growing. Type "exit" (or press Ctrl+D) to quit.
+// The conversation is stored in .memory/<session>.json, so it survives quitting
+// the program. Run it twice. Type "exit" (or press Ctrl+D) to quit.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.net.http.HttpClient;
@@ -23,22 +24,42 @@ void main() throws Exception {
   final String model = "gpt-oss-120b";
   final String token = System.getenv("OVH_AI_ENDPOINTS_ACCESS_TOKEN");
 
+  // Path relative to the current directory: a JBang script cannot locate its own
+  // .java file, which is why run.sh cd's into the example directory first.
+  // One file per session id, so another id is another conversation.
+  final String sessionId = "cli-session";
+  final var memoryFile = Path.of(".memory", sessionId + ".json");
+
+  Files.createDirectories(memoryFile.getParent());
+
   var mapper = new ObjectMapper();
 
-  // The body is built once; its messages array is the memory.
   ObjectNode body = mapper.createObjectNode();
   body.put("model", model);
   body.put("stream", true);
-  var messages = body.putArray("messages");
-  messages.addObject()
-      .put("role", "system")
-      .put("content", "provide a concise answer");
 
-  IO.println("===== 🧠 CHATBOT WITH MEMORY (type \"exit\" to quit) 🧠 =====");
+  // The memory is already a JSON node, so loading it is a readTree.
+  ArrayNode messages;
+  if (Files.exists(memoryFile) && Files.size(memoryFile) > 0) {
+    messages = (ArrayNode) mapper.readTree(Files.readString(memoryFile));
+    body.set("messages", messages);
+    IO.println("===== 🧠 MEMORY RESTORED FROM DISK (" + messages.size() + " messages) 🧠 =====");
+    IO.println(mapper.writerWithDefaultPrettyPrinter()
+        .writeValueAsString(messages));
+    IO.println();
+  } else {
+    messages = body.putArray("messages");
+    messages.addObject()
+        .put("role", "system")
+        .put("content", "provide a concise answer");
+    IO.println("===== 🧠 NO MEMORY YET, STARTING A NEW CONVERSATION 🧠 =====");
+    IO.println();
+  }
+
+  IO.println("===== 🧠 CHATBOT WITH PERSISTENT MEMORY (type \"exit\" to quit) 🧠 =====");
+  IO.println("💾 stored in " + memoryFile.toAbsolutePath());
   IO.println();
 
-  // One client for the whole conversation. Closed only when the chat is over:
-  // each streamed response is fully read inside the loop.
   try (var client = HttpClient.newHttpClient()) {
     while (true) {
       var userPrompt = IO.readln("⌨️  Your prompt: ");
@@ -51,7 +72,6 @@ void main() throws Exception {
           .put("role", "user")
           .put("content", userPrompt);
 
-      // The whole memory is sent again, and it grows by two messages per turn.
       IO.println("===== ⬆️  JSON REQUEST (memory sent to the model) ⬆️  =====");
       IO.println(mapper.writerWithDefaultPrettyPrinter()
           .writeValueAsString(body));
@@ -64,7 +84,6 @@ void main() throws Exception {
           .build();
       var response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
-      // Print the answer token by token while rebuilding it: the memory needs it whole.
       IO.println("===== 🤖 ANSWER (streaming) 🤖 =====");
       var answer = new StringBuilder();
       try (var reader = new BufferedReader(new InputStreamReader(response.body(), StandardCharsets.UTF_8))) {
@@ -90,10 +109,18 @@ void main() throws Exception {
       messages.addObject()
           .put("role", "assistant")
           .put("content", answer.toString());
+
+      // Written after every answer, so an interrupted session is still saved.
+      Files.writeString(memoryFile, mapper.writerWithDefaultPrettyPrinter()
+          .writeValueAsString(messages));
+      IO.println("💾 memory saved to " + memoryFile + " (" + messages.size() + " messages)");
+      IO.println();
     }
   }
 
-  IO.println("===== 🧠 FINAL MEMORY (the whole conversation) 🧠 =====");
+  IO.println("===== 🧠 FINAL MEMORY (kept in " + memoryFile + ") 🧠 =====");
   IO.println(mapper.writerWithDefaultPrettyPrinter()
       .writeValueAsString(messages));
+  IO.println();
+  IO.println("🗑️  Delete " + memoryFile + " to start a fresh conversation.");
 }
