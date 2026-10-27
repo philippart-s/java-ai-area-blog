@@ -1,6 +1,6 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA 26+
-//DEPS com.fasterxml.jackson.core:jackson-databind:2.18.2
+//DEPS com.fasterxml.jackson.core:jackson-databind:2.22.4
 //
 // Streaming chatbot with a persistent memory example calling OVHcloud AI
 // Endpoints (gpt-oss-120b), with the JDK HttpClient and Jackson.
