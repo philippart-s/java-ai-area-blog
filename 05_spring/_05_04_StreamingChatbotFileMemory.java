@@ -1,18 +1,18 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA 26+
-//DEPS org.springframework.boot:spring-boot-dependencies:4.1.0@pom
-//DEPS org.springframework.ai:spring-ai-bom:2.0.0@pom
-//DEPS org.springframework.boot:spring-boot-starter:4.1.0
+//DEPS org.springframework.boot:spring-boot-dependencies:4.1.2@pom
+//DEPS org.springframework.ai:spring-ai-bom:2.0.2@pom
+//DEPS org.springframework.boot:spring-boot-starter:4.1.2
 // AspectJ weaver, required by Spring AI's ChatClient advisors (AOP).
-//DEPS org.aspectj:aspectjweaver:1.9.25.1
-//DEPS org.springframework.ai:spring-ai-starter-model-openai:2.0.0
+//DEPS org.aspectj:aspectjweaver:1.9.26
+//DEPS org.springframework.ai:spring-ai-starter-model-openai:2.0.2
 // Servlet API present only so Boot's web-servlet config classes resolve during
 // bean introspection; the app stays non-web (spring.main.web-application-type=none).
 //DEPS jakarta.servlet:jakarta.servlet-api:6.1.0
 // Jackson, to write the messages ourselves — see the comment on StoredMessage.
 // Pinned to the 2.x already resolved here: Spring Boot 4 also brings Jackson 3
 // (package tools.jackson.*), and the two coexist on the classpath.
-//DEPS com.fasterxml.jackson.core:jackson-databind:2.21.4
+//DEPS com.fasterxml.jackson.core:jackson-databind:2.21.7
 //
 // Streaming chatbot with a persistent memory example calling OVHcloud AI
 // Endpoints (gpt-oss-120b) through Spring AI
