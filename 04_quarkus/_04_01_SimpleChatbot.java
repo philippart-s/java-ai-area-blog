@@ -1,10 +1,10 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
-//JAVA 21+
+//JAVA 26+
 //JAVAC_OPTIONS -parameters
 // jboss-threads needs java.lang opened on Java 24+ (thread-local reset capability).
 //JAVA_OPTIONS --add-opens=java.base/java.lang=ALL-UNNAMED
-//DEPS io.quarkus.platform:quarkus-bom:3.33.2@pom
-//DEPS io.quarkiverse.langchain4j:quarkus-langchain4j-openai:1.12.0
+//DEPS io.quarkus.platform:quarkus-bom:3.33.4.1@pom
+//DEPS io.quarkiverse.langchain4j:quarkus-langchain4j-openai:1.14.2
 //
 // Simple chatbot example calling OVHcloud AI Endpoints (gpt-oss-120b)
 // through Quarkus + quarkus-langchain4j

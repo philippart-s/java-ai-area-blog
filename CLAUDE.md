@@ -29,6 +29,7 @@ and run it.
 | 3. Conversation memory | `00.03_StreamingChatbotMemory.sh` | `_01_03_StreamingChatbotMemory` | `_02_03_StreamingChatbotMemory` | `_03_03_StreamingChatbotMemory`           | `_04_03_StreamingChatbotMemory` | `_05_03_StreamingChatbotMemory` |
 | 4. Multi-session memory | —                              | —                             | —                             | `_03_04_StreamingChatbotMultiSessionMemory` | folded into `_04_03` (`@MemoryId`) | folded into `_05_03` (conversation id) |
 | 5. File memory         | `00.04_StreamingChatbotFileMemory.sh` | `_01_04_StreamingChatbotFileMemory` | `_02_04_StreamingChatbotFileMemory` | `_03_05_StreamingChatbotFileMemory` | `_04_04_StreamingChatbotFileMemory` | `_05_04_StreamingChatbotFileMemory` |
+| 6. RAG                 | —                               | `_01_05_SimpleRag`            | `_02_05_SimpleRag`            | `_03_06_SimpleRag`                          | `_04_05_SimpleRag`            | `_05_05_SimpleRag`            |
 
 **Rule of thumb**: an example of row M is the same example as row M-1 *plus one idea*, and
 an example of column N does what column N-1 does with different tools. But **every script
@@ -42,14 +43,17 @@ have no technical relationship and must be free to evolve independently.
 .
 ├── .devcontainer/devcontainer.json   # wilda/java-devcontainer:26.1.1 (JDK 26 + JBang)
 ├── .env                              # 🤫 git-ignored, holds the OVHcloud token
+├── documents/*.md                    # knowledge base of the RAG examples
 ├── 00_bash/*.sh                      # curl + jq baseline, no launcher
 ├── 01_pure_java/                     # JDK HttpClient + Jackson, no AI lib
 ├── 02_sdk_java/                      # official OpenAI Java SDK
 ├── 03_langchain4j/                   # LangChain4j AI Services
 ├── 04_quarkus/                       # Quarkus command mode + quarkus-langchain4j
-│   └── application.properties        # injected via //FILES
+│   ├── application.properties        # injected via //FILES
+│   └── rag.properties                # injected as application.properties by the RAG example
 ├── 05_spring/                        # Spring Boot command mode + Spring AI
-│   └── application.properties        # injected via //FILES
+│   ├── application.properties        # injected via //FILES
+│   └── rag.properties                # injected as application.properties by the RAG example
 ├── 0X_*/run.sh                       # per-directory launcher (cd's in, sources ../.env, calls jbang)
 └── 0X_*/.memory/                     # 🤫 git-ignored, conversations of the *FileMemory examples
 ```
@@ -64,11 +68,14 @@ makes the files comparable side by side in an article.
 | Provider             | OVHcloud AI Endpoints (OpenAI-compatible)                        |
 | Base URL             | `https://oai.endpoints.kepler.ai.cloud.ovh.net/v1`               |
 | Model                | `gpt-oss-120b`                                                   |
+| Embedding model      | `bge-m3`, 1024 dimensions, `/v1/embeddings` on the same gateway  |
 | Credential           | env var `OVH_AI_ENDPOINTS_ACCESS_TOKEN`, read from `.env`         |
 | System prompt        | `provide a concise answer`                                        |
 | Memory window        | 10 messages                                                       |
 | Multi-session ids    | `cli-session`, or `stephane` / `fanny` for the scripted demo      |
 | Persisted memory     | `<stack>/.memory/<id>.json`, one file per conversation id         |
+| RAG documents        | `documents/*.md`, reached as `../documents` from an example       |
+| RAG question         | `Who is speaking about quantum compilers, and in which room?`     |
 | Comment language     | **English** (the blog posts are multilingual)                     |
 | Console I/O          | `IO.println` / `IO.print` / `IO.readln` — **never** `System.out`   |
 | Exit condition       | typing `exit`, or Ctrl+D / Ctrl+C                                 |
@@ -111,6 +118,9 @@ Notes:
 
 - `04_quarkus` and `05_spring` cannot use a compact source file: they need a `public class`
   named exactly like the file (`@QuarkusMain` / `@SpringBootConfiguration` entry point).
+- An example of those two directories that needs its own configuration mounts it under the
+  expected name instead of editing the shared file:
+  `//FILES application.properties=rag.properties`.
 - **Write ordinary developer comments.** What a line does, why a non-obvious choice was
   made, a gotcha worth flagging — nothing more. No multi-paragraph essays on a framework's
   design, no narrative arcs, no cross-references to other examples beyond the single
@@ -123,6 +133,11 @@ Notes:
   `===== 🤖 ANSWER 🤖 =====`, `===== 🤖 ANSWER (streaming) 🤖 =====`,
   `===== 🧠 MEMORY (resent to the model with the prompt) 🧠 =====`,
   `===== 🧠 FINAL MEMORY (the whole conversation) 🧠 =====`.
+  The RAG examples add `===== 📚 DOCUMENTS 📚 =====` (suffixed
+  `(one vector each)` when the example prints the vectors itself),
+  `===== ❓ QUESTION ❓ =====`, `===== 📐 SIMILARITY (closest first) 📐 =====`
+  and `===== 📄 RETRIEVED DOCUMENT 📄 =====`. A stack that no longer computes
+  the similarity itself simply drops the last two.
 - The user prompt is always read with `IO.readln("⌨️  Your prompt: ")`.
 - Commented-out lines are pedagogical on purpose (`// .logRequests(true)`,
   `//memoryStore.deleteMessages(...)`, `// @SystemMessage(...)`). Do not "clean them up".
@@ -201,6 +216,7 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 - OVHcloud AI Endpoints — https://www.ovhcloud.com/en/public-cloud/ai-endpoints/
 - `gpt-oss-120b` model card — https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
 - OpenAI Chat Completions API reference — https://platform.openai.com/docs/api-reference/chat
+- OpenAI Embeddings API reference — https://platform.openai.com/docs/api-reference/embeddings
 
 **Tooling**
 
@@ -212,19 +228,19 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 
 - `01_pure_java` — `java.net.http.HttpClient` https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpClient.html · Jackson https://github.com/FasterXML/jackson-databind
 - `02_sdk_java` — OpenAI Java SDK https://github.com/openai/openai-java
-- `03_langchain4j` — https://docs.langchain4j.dev/ · AI Services https://docs.langchain4j.dev/tutorials/ai-services · Chat Memory https://docs.langchain4j.dev/tutorials/chat-memory · repo https://github.com/langchain4j/langchain4j
-- `04_quarkus` — Quarkus https://quarkus.io/guides/ · command mode https://quarkus.io/guides/command-mode-reference · quarkus-langchain4j https://docs.quarkiverse.io/quarkus-langchain4j/dev/ · repo https://github.com/quarkiverse/quarkus-langchain4j
-- `05_spring` — Spring AI https://docs.spring.io/spring-ai/reference/ · Chat Client https://docs.spring.io/spring-ai/reference/api/chatclient.html · Chat Memory https://docs.spring.io/spring-ai/reference/api/chat-memory.html · repo https://github.com/spring-projects/spring-ai
+- `03_langchain4j` — https://docs.langchain4j.dev/ · AI Services https://docs.langchain4j.dev/tutorials/ai-services · Chat Memory https://docs.langchain4j.dev/tutorials/chat-memory · RAG https://docs.langchain4j.dev/tutorials/rag · repo https://github.com/langchain4j/langchain4j
+- `04_quarkus` — Quarkus https://quarkus.io/guides/ · command mode https://quarkus.io/guides/command-mode-reference · quarkus-langchain4j https://docs.quarkiverse.io/quarkus-langchain4j/dev/ · Easy RAG https://docs.quarkiverse.io/quarkus-langchain4j/dev/easy-rag.html · repo https://github.com/quarkiverse/quarkus-langchain4j
+- `05_spring` — Spring AI https://docs.spring.io/spring-ai/reference/ · Chat Client https://docs.spring.io/spring-ai/reference/api/chatclient.html · Chat Memory https://docs.spring.io/spring-ai/reference/api/chat-memory.html · RAG https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html · repo https://github.com/spring-projects/spring-ai
 
 ## Pinned versions (as of the current tree)
 
 | Directory        | Key dependencies                                                             |
 | ---------------- | ---------------------------------------------------------------------------- |
-| `01_pure_java`   | `jackson-databind:2.18.2`                                                     |
-| `02_sdk_java`    | `com.openai:openai-java:4.52.0`                                               |
-| `03_langchain4j` | `dev.langchain4j:langchain4j{,-open-ai}:1.18.0`, `slf4j-simple:2.0.17`        |
-| `04_quarkus`     | `quarkus-bom:3.33.2`, `quarkus-langchain4j-openai:1.12.0`                     |
-| `05_spring`      | `spring-boot-dependencies:4.1.0`, `spring-ai-bom:2.0.0`, `aspectjweaver:1.9.25.1`, `jackson-databind:2.21.4` |
+| `01_pure_java`   | `jackson-databind:2.22.4`                                                     |
+| `02_sdk_java`    | `com.openai:openai-java:4.94.0`                                               |
+| `03_langchain4j` | `dev.langchain4j:langchain4j{,-open-ai}:1.22.0`, `slf4j-simple:2.0.20` (`slf4j-nop` in the RAG example) |
+| `04_quarkus`     | `quarkus-bom:3.33.4.1`, `quarkus-langchain4j-openai:1.14.2`, `quarkus-langchain4j-easy-rag:1.14.2`, `log4j-to-slf4j:2.25.5` |
+| `05_spring`      | `spring-boot-dependencies:4.1.2`, `spring-ai-bom:2.0.2`, `aspectjweaver:1.9.26`, `jackson-databind:2.21.7`, `spring-ai-{rag,vector-store}:2.0.2` |
 
 Stack-specific gotchas already encoded in the files, keep them:
 
@@ -248,3 +264,18 @@ Stack-specific gotchas already encoded in the files, keep them:
   `clear()` is a no-op (see `04_quarkus/_04_04`).
 - Spring AI ships no message serializer: a file-backed `ChatMemoryRepository` stores the
   message type and text itself, like its own `JdbcChatMemoryRepository`.
+- Embedding model names are case-sensitive on AI Endpoints: `Qwen3-Embedding-8B` works,
+  `qwen3-embedding-8b` returns a 404.
+- `quarkus-langchain4j-easy-rag` pulls the whole Apache Tika suite, which loads a native
+  library (`--enable-native-access=ALL-UNNAMED`) and logs through log4j-api, which ships
+  without a binding (`log4j-to-slf4j`).
+- Spring AI 2.x dropped `QuestionAnswerAdvisor`: RAG goes through
+  `RetrievalAugmentationAdvisor` (`spring-ai-rag`), and `SimpleVectorStore` moved to
+  `spring-ai-vector-store`.
+- `quarkus-langchain4j` pins the Quarkus version it is built against in its parent pom
+  (`quarkus-langchain4j-parent:<v>`, property `quarkus.version`), and the latest stable
+  extension usually trails the latest platform. Read that property before bumping
+  `quarkus-bom`, and stay within the minor it names.
+- The Jackson 2 version of `05_spring` is the one `spring-boot-dependencies` manages
+  (property `jackson-2-bom.version`), not the newest on Maven Central: Spring Boot 4.1 runs
+  on Jackson 3 and only resolves Jackson 2 through that BOM.

@@ -34,9 +34,11 @@ unchanged, just pointed at a different base URL.
 | 3. Conversation memory  | `00.03_StreamingChatbotMemory.sh` | `_01_03_StreamingChatbotMemory` | `_02_03_StreamingChatbotMemory` | `_03_03_StreamingChatbotMemory`             | `_04_03_StreamingChatbotMemory` | `_05_03_StreamingChatbotMemory` |
 | 4. Multi-session memory | —                                 | —                               | —                               | `_03_04_StreamingChatbotMultiSessionMemory` | shown in `_04_03`               | shown in `_05_03`               |
 | 5. File memory          | `00.04_StreamingChatbotFileMemory.sh` | `_01_04_StreamingChatbotFileMemory` | `_02_04_StreamingChatbotFileMemory` | `_03_05_StreamingChatbotFileMemory`     | `_04_04_StreamingChatbotFileMemory` | `_05_04_StreamingChatbotFileMemory` |
+| 6. RAG                  | —                                 | `_01_05_SimpleRag`              | `_02_05_SimpleRag`              | `_03_06_SimpleRag`                          | `_04_05_SimpleRag`              | `_05_05_SimpleRag`              |
 
 Reading a line across gives you the same program written six ways. Reading a column down
-gives you one stack learning to stream, then to remember.
+gives you one stack learning to stream, then to remember, then to answer from a set of
+documents.
 
 ## Prerequisites
 
@@ -83,11 +85,17 @@ Type `exit` (or Ctrl+D) to leave the examples that loop.
 The `*FileMemory` examples store their conversation in `<stack>/.memory/<id>.json`, one
 file per conversation id. That directory is git-ignored; delete a file to start over.
 
+The `*SimpleRag` examples read the markdown files of [`documents/`](documents) — the
+programme of a fictional conference — embed them, and answer a question from the closest
+one. They ask a fixed question and exit; edit the documents or the question to see the
+retrieval change.
+
 ## What is shared by every example
 
 So that the files can be compared side by side:
 
-- endpoint `https://oai.endpoints.kepler.ai.cloud.ovh.net/v1`, model `gpt-oss-120b`;
+- endpoint `https://oai.endpoints.kepler.ai.cloud.ovh.net/v1`, model `gpt-oss-120b`,
+  embedding model `bge-m3`;
 - system prompt `provide a concise answer`, memory window of 10 messages;
 - the same emoji-delimited output sections (`⬆️ JSON REQUEST`, `🤖 ANSWER`, `🧠 MEMORY`…);
 - comments in **English**, because the blog posts are published in several languages.
