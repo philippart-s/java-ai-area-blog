@@ -1,13 +1,13 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA 26+
-//DEPS org.springframework.boot:spring-boot-dependencies:4.1.0@pom
-//DEPS org.springframework.ai:spring-ai-bom:2.0.0@pom
-//DEPS org.springframework.boot:spring-boot-starter:4.1.0
+//DEPS org.springframework.boot:spring-boot-dependencies:4.1.2@pom
+//DEPS org.springframework.ai:spring-ai-bom:2.0.2@pom
+//DEPS org.springframework.boot:spring-boot-starter:4.1.2
 // AspectJ weaver, required by Spring AI's ChatClient advisors (AOP).
-//DEPS org.aspectj:aspectjweaver:1.9.25.1
-//DEPS org.springframework.ai:spring-ai-starter-model-openai:2.0.0
-//DEPS org.springframework.ai:spring-ai-vector-store:2.0.0
-//DEPS org.springframework.ai:spring-ai-rag:2.0.0
+//DEPS org.aspectj:aspectjweaver:1.9.26
+//DEPS org.springframework.ai:spring-ai-starter-model-openai:2.0.2
+//DEPS org.springframework.ai:spring-ai-vector-store:2.0.2
+//DEPS org.springframework.ai:spring-ai-rag:2.0.2
 // Servlet API present only so Boot's web-servlet config classes resolve during
 // bean introspection; the app stays non-web (spring.main.web-application-type=none).
 //DEPS jakarta.servlet:jakarta.servlet-api:6.1.0

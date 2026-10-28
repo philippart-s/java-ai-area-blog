@@ -1,8 +1,8 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA 26+
-//DEPS dev.langchain4j:langchain4j:1.18.0
-//DEPS dev.langchain4j:langchain4j-open-ai:1.18.0
-//DEPS org.slf4j:slf4j-nop:2.0.17
+//DEPS dev.langchain4j:langchain4j:1.22.0
+//DEPS dev.langchain4j:langchain4j-open-ai:1.22.0
+//DEPS org.slf4j:slf4j-nop:2.0.20
 //
 // Simple RAG example calling OVHcloud AI Endpoints (gpt-oss-120b)
 // through LangChain4j AI Services (https://github.com/langchain4j/langchain4j).

@@ -4,12 +4,12 @@
 //JAVA_OPTIONS --add-opens=java.base/java.lang=ALL-UNNAMED
 // easy-rag pulls the whole Apache Tika suite, which loads a native library.
 //JAVA_OPTIONS --enable-native-access=ALL-UNNAMED
-//DEPS io.quarkus.platform:quarkus-bom:3.33.2@pom
-//DEPS io.quarkiverse.langchain4j:quarkus-langchain4j-openai:1.12.0
-//DEPS io.quarkiverse.langchain4j:quarkus-langchain4j-easy-rag:1.12.0
+//DEPS io.quarkus.platform:quarkus-bom:3.33.4.1@pom
+//DEPS io.quarkiverse.langchain4j:quarkus-langchain4j-openai:1.14.2
+//DEPS io.quarkiverse.langchain4j:quarkus-langchain4j-easy-rag:1.14.2
 // Tika logs through log4j-api, which ships without a binding: route it into the
 // Quarkus log manager instead of letting it print "could not find a provider".
-//DEPS org.apache.logging.log4j:log4j-to-slf4j:2.25.3
+//DEPS org.apache.logging.log4j:log4j-to-slf4j:2.25.5
 //
 // Simple RAG example calling OVHcloud AI Endpoints (gpt-oss-120b)
 // through Quarkus + quarkus-langchain4j
