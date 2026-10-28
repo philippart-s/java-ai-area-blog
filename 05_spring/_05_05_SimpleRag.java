@@ -55,7 +55,11 @@ public class _05_05_SimpleRag {
     private static final Path DOCUMENTS_DIR = Path.of("..", "documents");
 
     public static void main(String[] args) {
-        SpringApplication.run(_05_05_SimpleRag.class, args);
+        // The retrieval advisor runs on a thread pool whose workers are not
+        // daemons and never expire when idle, so the JVM would never leave on
+        // its own. exit() closes the context, System.exit() leaves.
+        System.exit(SpringApplication.exit(
+                SpringApplication.run(_05_05_SimpleRag.class, args)));
     }
 
     @Bean
