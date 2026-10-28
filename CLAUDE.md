@@ -239,8 +239,8 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 | `01_pure_java`   | `jackson-databind:2.22.4`                                                     |
 | `02_sdk_java`    | `com.openai:openai-java:4.94.0`                                               |
 | `03_langchain4j` | `dev.langchain4j:langchain4j{,-open-ai}:1.22.0`, `slf4j-simple:2.0.20` (`slf4j-nop` in the RAG example) |
-| `04_quarkus`     | `quarkus-bom:3.33.4.1`, `quarkus-langchain4j-openai:1.14.2`, `quarkus-langchain4j-easy-rag:1.12.0`, `log4j-to-slf4j:2.25.3` |
-| `05_spring`      | `spring-boot-dependencies:4.1.2`, `spring-ai-bom:2.0.2`, `aspectjweaver:1.9.26`, `jackson-databind:2.21.7`, `spring-ai-{rag,vector-store}:2.0.0` |
+| `04_quarkus`     | `quarkus-bom:3.33.4.1`, `quarkus-langchain4j-openai:1.14.2`, `quarkus-langchain4j-easy-rag:1.14.2`, `log4j-to-slf4j:2.25.5` |
+| `05_spring`      | `spring-boot-dependencies:4.1.2`, `spring-ai-bom:2.0.2`, `aspectjweaver:1.9.26`, `jackson-databind:2.21.7`, `spring-ai-{rag,vector-store}:2.0.2` |
 
 Stack-specific gotchas already encoded in the files, keep them:
 
