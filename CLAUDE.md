@@ -220,11 +220,11 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 
 | Directory        | Key dependencies                                                             |
 | ---------------- | ---------------------------------------------------------------------------- |
-| `01_pure_java`   | `jackson-databind:2.18.2`                                                     |
-| `02_sdk_java`    | `com.openai:openai-java:4.52.0`                                               |
-| `03_langchain4j` | `dev.langchain4j:langchain4j{,-open-ai}:1.18.0`, `slf4j-simple:2.0.17`        |
-| `04_quarkus`     | `quarkus-bom:3.33.2`, `quarkus-langchain4j-openai:1.12.0`                     |
-| `05_spring`      | `spring-boot-dependencies:4.1.0`, `spring-ai-bom:2.0.0`, `aspectjweaver:1.9.25.1`, `jackson-databind:2.21.4` |
+| `01_pure_java`   | `jackson-databind:2.22.4`                                                     |
+| `02_sdk_java`    | `com.openai:openai-java:4.94.0`                                               |
+| `03_langchain4j` | `dev.langchain4j:langchain4j{,-open-ai}:1.22.0`, `slf4j-simple:2.0.20`        |
+| `04_quarkus`     | `quarkus-bom:3.33.4.1`, `quarkus-langchain4j-openai:1.14.2`                   |
+| `05_spring`      | `spring-boot-dependencies:4.1.2`, `spring-ai-bom:2.0.2`, `aspectjweaver:1.9.26`, `jackson-databind:2.21.7` |
 
 Stack-specific gotchas already encoded in the files, keep them:
 
@@ -248,3 +248,10 @@ Stack-specific gotchas already encoded in the files, keep them:
   `clear()` is a no-op (see `04_quarkus/_04_04`).
 - Spring AI ships no message serializer: a file-backed `ChatMemoryRepository` stores the
   message type and text itself, like its own `JdbcChatMemoryRepository`.
+- `quarkus-langchain4j` pins the Quarkus version it is built against in its parent pom
+  (`quarkus-langchain4j-parent:<v>`, property `quarkus.version`), and the latest stable
+  extension usually trails the latest platform. Read that property before bumping
+  `quarkus-bom`, and stay within the minor it names.
+- The Jackson 2 version of `05_spring` is the one `spring-boot-dependencies` manages
+  (property `jackson-2-bom.version`), not the newest on Maven Central: Spring Boot 4.1 runs
+  on Jackson 3 and only resolves Jackson 2 through that BOM.
