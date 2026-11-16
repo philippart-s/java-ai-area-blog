@@ -252,10 +252,11 @@ Stack-specific gotchas already encoded in the files, keep them:
   `@SpringBootApplication`, because a single file in the default package would component-scan
   the whole classpath.
 - Spring needs `jakarta.servlet-api` on the classpath even though the app is non-web.
-- A STREAMING Spring example must end with
-  `System.exit(SpringApplication.exit(SpringApplication.run(...)))`: the OpenAI client
-  opens a non-daemon cached thread pool and the JVM otherwise waits out its 60s idle
-  timeout.
+- A Spring example must end with
+  `System.exit(SpringApplication.exit(SpringApplication.run(...)))` as soon as it streams
+  or uses an advisor: both leave non-daemon threads behind. The OpenAI client's cached
+  pool costs a 60s wait on exit; the `ai-advisor-*` pool of a retrieval advisor never
+  expires at all, and the JVM then never leaves.
 - A JBang script cannot locate its own `.java` file, so `.memory/` is resolved against the
   current directory and every `run.sh` `cd`s into its own directory first. Bash examples
   use `$(dirname "$0")` instead and need no `cd`.
