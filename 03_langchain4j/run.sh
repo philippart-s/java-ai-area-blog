@@ -10,6 +10,7 @@
 #   ./run.sh _03_04_StreamingChatbotMultiSessionMemory.java
 #   ./run.sh _03_05_StreamingChatbotFileMemory.java
 #   ./run.sh _03_06_SimpleRag.java
+#   ./run.sh _03_07_FunctionCalling.java
 
 set -euo pipefail
 
