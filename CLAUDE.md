@@ -229,7 +229,7 @@ bumping a version, bump it in **all** files of the directory in the same commit.
 - `01_pure_java` — `java.net.http.HttpClient` https://docs.oracle.com/en/java/javase/25/docs/api/java.net.http/java/net/http/HttpClient.html · Jackson https://github.com/FasterXML/jackson-databind
 - `02_sdk_java` — OpenAI Java SDK https://github.com/openai/openai-java
 - `03_langchain4j` — https://docs.langchain4j.dev/ · AI Services https://docs.langchain4j.dev/tutorials/ai-services · Chat Memory https://docs.langchain4j.dev/tutorials/chat-memory · RAG https://docs.langchain4j.dev/tutorials/rag · repo https://github.com/langchain4j/langchain4j
-- `04_quarkus` — Quarkus https://quarkus.io/guides/ · command mode https://quarkus.io/guides/command-mode-reference · quarkus-langchain4j https://docs.quarkiverse.io/quarkus-langchain4j/dev/ · Easy RAG https://docs.quarkiverse.io/quarkus-langchain4j/dev/easy-rag.html · repo https://github.com/quarkiverse/quarkus-langchain4j
+- `04_quarkus` — Quarkus https://quarkus.io/guides/ · command mode https://quarkus.io/guides/command-mode-reference · quarkus-langchain4j https://docs.quarkiverse.io/quarkus-langchain4j/dev/ · Easy RAG https://docs.quarkiverse.io/quarkus-langchain4j/dev/rag-easy-rag.html · repo https://github.com/quarkiverse/quarkus-langchain4j
 - `05_spring` — Spring AI https://docs.spring.io/spring-ai/reference/ · Chat Client https://docs.spring.io/spring-ai/reference/api/chatclient.html · Chat Memory https://docs.spring.io/spring-ai/reference/api/chat-memory.html · RAG https://docs.spring.io/spring-ai/reference/api/retrieval-augmented-generation.html · repo https://github.com/spring-projects/spring-ai
 
 ## Pinned versions (as of the current tree)

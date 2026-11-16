@@ -20,7 +20,7 @@
 // only thing left here is the question. Everything is in rag.properties.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
-// Docs: https://docs.quarkiverse.io/quarkus-langchain4j/dev/easy-rag.html
+// Docs: https://docs.quarkiverse.io/quarkus-langchain4j/dev/rag-easy-rag.html
 
 // Mounted as application.properties, so the other examples keep theirs.
 //FILES application.properties=rag.properties
