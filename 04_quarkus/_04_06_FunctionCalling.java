@@ -18,7 +18,7 @@
 // back, and the model then writes the final answer.
 //
 // Docs: https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/gpt-oss-120b/
-// Docs: https://docs.quarkiverse.io/quarkus-langchain4j/dev/agent-and-tools.html
+// Docs: https://docs.quarkiverse.io/quarkus-langchain4j/dev/function-calling.html
 
 //FILES application.properties
 
