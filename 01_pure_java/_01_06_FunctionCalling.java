@@ -92,6 +92,15 @@ void main() throws Exception {
     //    its arguments, themselves a JSON document carried in a string.
     JsonNode assistantMessage = response.at("/choices/0/message");
     JsonNode toolCall = assistantMessage.at("/tool_calls/0");
+
+    // Asking for a function is a choice of the model, not an obligation: without a
+    // tool call its message already holds the answer and there is nothing to run.
+    if (toolCall.isMissingNode()) {
+        IO.println("===== 🤖 ANSWER 🤖 =====");
+        IO.println(assistantMessage.at("/content").asText());
+        return;
+    }
+
     var functionName = toolCall.at("/function/name").asText();
     var arguments = toolCall.at("/function/arguments").asText();
 
@@ -99,7 +108,13 @@ void main() throws Exception {
     IO.println(functionName + " " + arguments);
     IO.println();
 
-    // 3) Run the function. The model only named it, calling it is up to the program.
+    // 3) Run the function. The model only named it, calling it is up to the program,
+    //    which dispatches on the name instead of trusting it to be the right one.
+    if (!"get_room_capacity".equals(functionName)) {
+        IO.println("Unexpected function requested by the model: " + functionName);
+        return;
+    }
+
     var room = MAPPER.readTree(arguments).get("room").asText();
     var result = getRoomCapacity(room);
 
