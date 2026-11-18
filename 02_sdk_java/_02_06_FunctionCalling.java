@@ -29,7 +29,12 @@ import com.openai.models.chat.completions.ChatCompletionToolMessageParam;
 @JsonClassDescription("Returns the number of seats of a conference room")
 record GetRoomCapacity(@JsonPropertyDescription("Name of the room, e.g. Coral") String room) {
     RoomCapacity call() {
-        return new RoomCapacity(room, ThreadLocalRandom.current().nextInt(50, 501));
+        var capacity = ThreadLocalRandom.current().nextInt(50, 501);
+
+        IO.println("🐞 GetRoomCapacity called for room \"" + room + "\", returning capacity " + capacity);
+        IO.println();
+
+        return new RoomCapacity(room, capacity);
     }
 }
 
@@ -74,14 +79,30 @@ void main() {
     // 2) The model answered with a tool call instead of a text: a function name and
     //    its arguments, themselves a JSON document carried in a string.
     ChatCompletionMessage assistantMessage = response.choices().getFirst().message();
-    var toolCall = assistantMessage.toolCalls().orElseThrow().getFirst().asFunction();
+    var toolCalls = assistantMessage.toolCalls().orElse(List.of());
+
+    // Asking for a function is a choice of the model, not an obligation: without a
+    // tool call its message already holds the answer and there is nothing to run.
+    if (toolCalls.isEmpty()) {
+        IO.println("===== 🤖 ANSWER 🤖 =====");
+        IO.println(assistantMessage.content().orElse(""));
+        return;
+    }
+
+    var toolCall = toolCalls.getFirst().asFunction();
 
     IO.println("===== 🛠️ TOOL CALL (requested by the model) 🛠️ =====");
     IO.println(toolCall.function().name() + " " + toolCall.function().arguments());
     IO.println();
 
-    // 3) Run the function. The model only named it, calling it is up to the program.
+    // 3) Run the function. The model only named it, calling it is up to the program,
+    //    which dispatches on the name instead of trusting it to be the right one.
     //    arguments(Class) parses the JSON arguments into the record.
+    if (!"get_room_capacity".equals(toolCall.function().name())) {
+        IO.println("Unexpected function requested by the model: " + toolCall.function().name());
+        return;
+    }
+
     var result = toolCall.function().arguments(GetRoomCapacity.class).call();
 
     var toolMessage = ChatCompletionToolMessageParam.builder()
