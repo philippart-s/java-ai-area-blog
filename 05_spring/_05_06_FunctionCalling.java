@@ -48,7 +48,12 @@ record RoomCapacity(String room, int capacity) {}
 class RoomTools {
     @Tool(description = "Returns the number of seats of a conference room")
     RoomCapacity getRoomCapacity(@ToolParam(description = "Name of the room, e.g. Coral") String room) {
-        return new RoomCapacity(room, ThreadLocalRandom.current().nextInt(50, 501));
+        var capacity = ThreadLocalRandom.current().nextInt(50, 501);
+
+        IO.println("🐞 getRoomCapacity called for room \"" + room + "\", returning capacity " + capacity);
+        IO.println();
+
+        return new RoomCapacity(room, capacity);
     }
 }
 
