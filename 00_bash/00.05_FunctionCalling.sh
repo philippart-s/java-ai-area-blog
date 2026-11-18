@@ -80,15 +80,31 @@ echo
 # 2) The model answered with a tool call instead of a text: a function name and
 #    its arguments, themselves a JSON document carried in a string.
 ASSISTANT_MESSAGE=$(echo "$RESPONSE" | jq '.choices[0].message')
-TOOL_CALL_ID=$(echo "$ASSISTANT_MESSAGE" | jq -r '.tool_calls[0].id')
-FUNCTION_NAME=$(echo "$ASSISTANT_MESSAGE" | jq -r '.tool_calls[0].function.name')
-ARGUMENTS=$(echo "$ASSISTANT_MESSAGE" | jq -r '.tool_calls[0].function.arguments')
+TOOL_CALL=$(echo "$ASSISTANT_MESSAGE" | jq -c '.tool_calls[0] // empty')
+
+# Asking for a function is a choice of the model, not an obligation: without a
+# tool call its message already holds the answer and there is nothing to run.
+if [ -z "$TOOL_CALL" ]; then
+  echo "===== 🤖 ANSWER 🤖 ====="
+  echo "$ASSISTANT_MESSAGE" | jq -r '.content'
+  exit 0
+fi
+
+TOOL_CALL_ID=$(echo "$TOOL_CALL" | jq -r '.id')
+FUNCTION_NAME=$(echo "$TOOL_CALL" | jq -r '.function.name')
+ARGUMENTS=$(echo "$TOOL_CALL" | jq -r '.function.arguments')
 
 echo "===== 🛠️ TOOL CALL (requested by the model) 🛠️ ====="
 echo "$FUNCTION_NAME $ARGUMENTS"
 echo
 
-# 3) Run the function. The model only named it, calling it is up to the script.
+# 3) Run the function. The model only named it, calling it is up to the script,
+#    which dispatches on the name instead of trusting it to be the right one.
+if [ "$FUNCTION_NAME" != "get_room_capacity" ]; then
+  echo "Unexpected function requested by the model: $FUNCTION_NAME" >&2
+  exit 1
+fi
+
 ROOM=$(echo "$ARGUMENTS" | jq -r '.room')
 RESULT=$(get_room_capacity "$ROOM")
 
