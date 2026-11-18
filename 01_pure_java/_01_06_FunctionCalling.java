@@ -31,9 +31,14 @@ final HttpClient CLIENT = HttpClient.newHttpClient();
 // The function the model is allowed to ask for. A random number stands in for a
 // real lookup: the model cannot guess it, so the answer has to come from here.
 String getRoomCapacity(String room) {
+    var capacity = ThreadLocalRandom.current().nextInt(50, 501);
+
+    IO.println("🐞 getRoomCapacity called for room \"" + room + "\", returning capacity " + capacity);
+    IO.println();
+
     return MAPPER.createObjectNode()
             .put("room", room)
-            .put("capacity", ThreadLocalRandom.current().nextInt(50, 501))
+            .put("capacity", capacity)
             .toString();
 }
 
