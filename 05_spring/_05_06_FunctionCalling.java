@@ -1,8 +1,5 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA 26+
-// Keeps the parameter names in the bytecode: the name of the tool parameter is
-// read from there.
-//JAVAC_OPTIONS -parameters
 //DEPS org.springframework.boot:spring-boot-dependencies:4.1.2@pom
 //DEPS org.springframework.ai:spring-ai-bom:2.0.2@pom
 //DEPS org.springframework.boot:spring-boot-starter:4.1.2
