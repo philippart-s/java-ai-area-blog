@@ -20,7 +20,13 @@ QUESTION="What is the capacity of the Nautilus room?"
 # The function the model is allowed to ask for. A random number stands in for a
 # real lookup: the model cannot guess it, so the answer has to come from here.
 get_room_capacity() {
-  jq -nc --arg room "$1" --argjson capacity $(( RANDOM % 451 + 50 )) \
+  local capacity=$(( RANDOM % 451 + 50 ))
+
+  # Printed on stderr: stdout is the result handed back to the model.
+  echo "🐞 get_room_capacity called for room \"$1\", returning capacity $capacity" >&2
+  echo >&2
+
+  jq -nc --arg room "$1" --argjson capacity "$capacity" \
     '{ room: $room, capacity: $capacity }'
 }
 
