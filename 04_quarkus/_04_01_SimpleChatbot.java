@@ -1,6 +1,5 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //JAVA 26+
-//JAVAC_OPTIONS -parameters
 // jboss-threads needs java.lang opened on Java 24+ (thread-local reset capability).
 //JAVA_OPTIONS --add-opens=java.base/java.lang=ALL-UNNAMED
 //DEPS io.quarkus.platform:quarkus-bom:3.33.4.1@pom
